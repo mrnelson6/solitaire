@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Solitaire</title>
+  <meta name="description" content="Klondike, Spider, FreeCell and Yukon solitaire. Free, offline and installable.">
+  <meta name="theme-color" content="#f4f5f8" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f1115" media="(prefers-color-scheme: dark)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Solitaire">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/styles.css">
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <!-- Suit shapes, used by every card -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="suit-s" viewBox="0 0 100 100"><path d="M50 4C38 22 8 38 8 62c0 14 11 23 23 23 6 0 11-2 15-6-2 8-6 14-12 17h32c-6-3-10-9-12-17 4 4 9 6 15 6 12 0 23-9 23-23C92 38 62 22 50 4Z"/></symbol>
+    <symbol id="suit-h" viewBox="0 0 100 100"><path d="M50 92C34 78 6 58 6 33 6 18 17 8 30 8c9 0 16 5 20 13 4-8 11-13 20-13 13 0 24 10 24 25 0 25-28 45-44 59Z"/></symbol>
+    <symbol id="suit-d" viewBox="0 0 100 100"><path d="M50 4 86 50 50 96 14 50Z"/></symbol>
+    <symbol id="suit-c" viewBox="0 0 100 100"><path d="M50 6a21 21 0 0 0-19 30A21 21 0 1 0 45 70c-2 11-6 18-12 26h34c-6-8-10-15-12-26a21 21 0 1 0 14-34A21 21 0 0 0 50 6Z"/></symbol>
+  </svg>
+
+  <main id="app">
+    <!-- Home -->
+    <section id="home" class="view">
+      <header class="home-header">
+        <h1>Solitaire</h1>
+        <button class="icon-btn" id="settings-btn" aria-label="Settings">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>
+        </button>
+      </header>
+
+      <div class="card install-card" id="install-card" hidden>
+        <div>
+          <strong>Get the app</strong>
+          <p id="install-text">Install Solitaire on your home screen for full-screen, offline play.</p>
+        </div>
+        <div class="install-actions">
+          <button class="btn primary small" id="install-btn" hidden>Install</button>
+          <button class="btn ghost small" id="install-dismiss">Not now</button>
+        </div>
+      </div>
+
+      <article class="card continue-card" id="continue-card" hidden>
+        <div>
+          <span class="eyebrow">In progress</span>
+          <div class="continue-meta" id="continue-meta"></div>
+        </div>
+        <button class="btn primary" id="continue-btn">Resume</button>
+      </article>
+
+      <h3 class="section-title">Choose a game</h3>
+      <div class="variant-grid" id="variant-grid">
+        <button class="variant" data-variant="klondike"><span>Klondike</span><em></em><small></small></button>
+        <button class="variant" data-variant="spider"><span>Spider</span><em></em><small></small></button>
+        <button class="variant" data-variant="freecell"><span>FreeCell</span><em></em><small></small></button>
+        <button class="variant" data-variant="yukon"><span>Yukon</span><em></em><small></small></button>
+      </div>
+    </section>
+
+    <!-- Game -->
+    <section id="game" class="view" hidden>
+      <header class="game-header">
+        <button class="icon-btn" id="back-btn" aria-label="Back to menu">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="game-title">
+          <span id="game-label"></span>
+          <small id="game-sub"></small>
+        </div>
+        <button class="timer-btn" id="pause-btn" aria-label="Pause">
+          <span id="timer">0:00</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg>
+        </button>
+      </header>
+
+      <div class="table-wrap">
+        <div class="table" id="table" aria-label="Card table"></div>
+        <button class="btn primary finish-btn" id="finish-btn" hidden>Finish</button>
+        <div class="pause-overlay" id="pause-overlay" hidden>
+          <span>Paused</span>
+          <button class="btn primary" id="resume-btn">Resume</button>
+        </div>
+      </div>
+
+      <nav class="tools">
+        <button class="tool" id="undo-btn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+          <span>Undo</span>
+        </button>
+        <button class="tool" id="hint-btn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2Z"/></svg>
+          <span>Hint</span>
+        </button>
+        <button class="tool" id="restart-btn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+          <span>Restart</span>
+        </button>
+        <button class="tool" id="new-btn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M12 9v6M9 12h6"/></svg>
+          <span>New deal</span>
+        </button>
+      </nav>
+    </section>
+  </main>
+
+  <!-- New game setup -->
+  <dialog id="setup-dialog">
+    <div class="sheet">
+      <div class="sheet-header">
+        <h2 id="setup-title"></h2>
+        <button class="icon-btn" data-close aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <p class="rules" id="setup-rules"></p>
+      <div id="setup-options"></div>
+      <div class="setup-stats" id="setup-stats"></div>
+      <button class="btn primary" id="setup-play">Deal</button>
+    </div>
+  </dialog>
+
+  <!-- Win -->
+  <dialog id="win-dialog">
+    <div class="sheet">
+      <h2>You won!</h2>
+      <div class="win-stats">
+        <div><span class="stat-value" id="win-time"></span><span class="stat-label">Time</span></div>
+        <div><span class="stat-value" id="win-moves"></span><span class="stat-label">Moves</span></div>
+        <div><span class="stat-value" id="win-best"></span><span class="stat-label">Best</span></div>
+      </div>
+      <p class="muted center" id="win-note"></p>
+      <div class="btn-stack">
+        <button class="btn primary" id="win-again">Deal again</button>
+        <button class="btn ghost" id="win-home">Back to menu</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Settings -->
+  <dialog id="settings-dialog">
+    <div class="sheet">
+      <div class="sheet-header">
+        <h2>Settings</h2>
+        <button class="icon-btn" data-close aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="setting-row">
+        <span>Klondike</span>
+        <div class="segmented" data-option="klondike.draw">
+          <button data-value="1">Draw 1</button>
+          <button data-value="3">Draw 3</button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <span>Spider</span>
+        <div class="segmented" data-option="spider.suits">
+          <button data-value="1">1 suit</button>
+          <button data-value="2">2 suits</button>
+          <button data-value="4">4 suits</button>
+        </div>
+      </div>
+      <label class="toggle"><span>Move cards to foundations automatically</span><input type="checkbox" data-setting="autoFoundation"><i></i></label>
+      <label class="toggle"><span>Tap a card to move it</span><input type="checkbox" data-setting="tapToMove"><i></i></label>
+      <label class="toggle"><span>Vibration</span><input type="checkbox" data-setting="haptics"><i></i></label>
+      <div class="setting-row">
+        <span>Table</span>
+        <div class="swatches" data-swatch="felt">
+          <button data-value="green" aria-label="Green" style="--c:#2f7a53"></button>
+          <button data-value="blue" aria-label="Blue" style="--c:#2b5f8f"></button>
+          <button data-value="red" aria-label="Red" style="--c:#8a3a3f"></button>
+          <button data-value="slate" aria-label="Slate" style="--c:#3e4654"></button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <span>Card back</span>
+        <div class="swatches" data-swatch="back">
+          <button data-value="blue" aria-label="Blue" style="--c:#3563e9"></button>
+          <button data-value="red" aria-label="Red" style="--c:#c8364a"></button>
+          <button data-value="green" aria-label="Green" style="--c:#1f8a5b"></button>
+          <button data-value="purple" aria-label="Purple" style="--c:#7a45c2"></button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <span>Theme</span>
+        <div class="segmented" id="theme-select">
+          <button data-theme-value="auto">Auto</button>
+          <button data-theme-value="light">Light</button>
+          <button data-theme-value="dark">Dark</button>
+        </div>
+      </div>
+      <p class="muted small" id="stats-summary"></p>
+    </div>
+  </dialog>
+
+  <!-- Confirm -->
+  <dialog id="confirm-dialog">
+    <div class="sheet">
+      <p id="confirm-text"></p>
+      <div class="btn-row">
+        <button class="btn" value="cancel" id="confirm-cancel">Cancel</button>
+        <button class="btn primary" value="ok" id="confirm-ok">Continue</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

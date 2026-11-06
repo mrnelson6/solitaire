@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect width="100" height="100" rx="22" fill="#2f7a53"/>
+  <g transform="rotate(-12 50 60)">
+    <rect x="22" y="22" width="40" height="56" rx="5" fill="#3563e9" stroke="#fff" stroke-width="2.5"/>
+  </g>
+  <g transform="rotate(8 50 60)">
+    <rect x="38" y="20" width="40" height="56" rx="5" fill="#fff"/>
+    <text x="43" y="34" font-family="Segoe UI, system-ui, sans-serif" font-weight="700" font-size="12" fill="#1b1f2a">A</text>
+    <path transform="translate(46 37) scale(0.24)" fill="#1b1f2a" d="M50 4C38 22 8 38 8 62c0 14 11 23 23 23 6 0 11-2 15-6-2 8-6 14-12 17h32c-6-3-10-9-12-17 4 4 9 6 15 6 12 0 23-9 23-23C92 38 62 22 50 4Z"/>
+  </g>
+</svg>
