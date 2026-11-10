@@ -80,6 +80,11 @@
 
 * { box-sizing: border-box; }
 
+/* touch-action isn't inherited, and iOS only honours it on the element that
+   was tapped, so set it everywhere to stop double-tap zoom. Elements that
+   need something stricter (the card table) override it below. */
+*, *::before, *::after { touch-action: manipulation; }
+
 html, body {
   margin: 0;
   height: 100%;

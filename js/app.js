@@ -906,6 +906,32 @@ document.querySelectorAll('dialog').forEach((dialog) => {
 
 // ---------- Install prompt ----------
 
+// ---------- Zoom lock ----------
+// iOS ignores user-scalable=no in Safari and doesn't always honour
+// touch-action, so a double-tap or pinch can zoom the page. In the installed
+// app there's no browser UI to zoom back out, so the view gets stuck.
+
+// Pinch: Safari's proprietary gesture events.
+for (const type of ['gesturestart', 'gesturechange', 'gestureend']) {
+  document.addEventListener(type, (e) => e.preventDefault(), { passive: false });
+}
+document.addEventListener('touchmove', (e) => {
+  if (e.touches.length > 1 || (e.scale !== undefined && e.scale !== 1)) e.preventDefault();
+}, { passive: false });
+
+// Double-tap: cancel the second quick tap. Buttons and form controls are left
+// alone so their click events still fire; touch-action covers them. The card
+// table uses pointer events, which still fire when touchend is cancelled.
+let lastTouchEnd = 0;
+document.addEventListener('touchend', (e) => {
+  const now = e.timeStamp;
+  const quick = now - lastTouchEnd < 350;
+  lastTouchEnd = now;
+  if (quick && e.cancelable && !e.target.closest('button, a, input, select, textarea, label')) {
+    e.preventDefault();
+  }
+}, { passive: false });
+
 const isStandalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
 const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) ||
   (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
